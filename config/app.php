@@ -16,7 +16,7 @@ return [
     'arduino' => 'http://192.168.0.106',
     'token' => env('TOKEN_SECRET'),
 
-    'name' => env('APP_NAME', 'Sistema Alarme'),
+    'name' => 'Sistema de Alarme',
     /*
     |--------------------------------------------------------------------------
     | Application Environment
