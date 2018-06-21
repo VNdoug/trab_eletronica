@@ -17,10 +17,12 @@
                     @if ($alarmeAtivo)
                         <h2>Alarme ativo!</h2>
                         {{-- <a href="{{config('arduino').'/desativar'}}" class="btn btn-danger">Desativar alarme</a> --}}
-                        <a href="{{route('desativar')}}?token={{config('app.token')}}" class="btn btn-danger">Desativar alarme</a>
+                        {{-- <a href="{{route('desativar')}}?token={{config('app.token')}}" class="btn btn-danger">Desativar alarme</a> --}}
+                        <a href="{{route('desativar')}}" class="btn btn-danger">Desativar alarme</a>
                     @else
                         <h2>Alarme inativo!</h2>
-                        <a href="{{route('ativar')}}?token={{config('app.token')}}" class="btn btn-success">Ativar alarme</a>
+                        <a href="{{route('ativar')}}" class="btn btn-success">Ativar alarme</a>
+                       {{--  <a href="{{route('ativar')}}?token={{config('app.token')}}" class="btn btn-success">Ativar alarme</a> --}}
                         {{-- <a href="{{config('arduino').'/ativar'}}" class="btn btn-success">Ativar alarme</a> --}}
                     @endif
 

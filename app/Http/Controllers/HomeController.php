@@ -23,7 +23,10 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $status = json_decode(file_get_contents('http://192.168.0.106/status'), true);
+        $link = config('app.arduino').'/status?token='.config('app.token');
+
+        $status = json_decode(file_get_contents($link), true);
+
         // $status = file_get_contents('http://192.168.0.106/status');
         $alarmeAtivo = $status['ativo'];
         return view('home', compact('alarmeAtivo'));
@@ -31,13 +34,15 @@ class HomeController extends Controller
 
     public function ativar()
     {
-        file_get_contents('http://192.168.0.106/ativar');
+        $link = config('app.arduino').'/ativar?token='.config('app.token');
+        file_get_contents($link);
         return redirect()->route('home');
     }
 
     public function desativar()
     {
-        file_get_contents('http://192.168.0.106/desativar');
+        $link = config('app.arduino').'/desativar?token='.config('app.token');
+        file_get_contents($link);
         return redirect()->route('home');
     }
 

@@ -1,12 +1,12 @@
-int led = 8;
 int pir = 7;
+int ledAlarme = 8;
+int ledAtivo = 9;
+int buzzer = 3;
 
 int movimento;
 
 int alarmeAtivo = 0;
 int intrusoDetectado = 0;
-
-String token = "o43DS89fdya890sdyfa8s9yf0das8f9AS890ySS8";
 
 #include "etherShield.h"
 #include "ETHER_28J60.h"
@@ -26,61 +26,71 @@ ETHER_28J60 ethernet;
 
 void setup()
 {
-	ethernet.setup(mac, ip, port);
-	pinMode(pir, INPUT);
-	pinMode(led, OUTPUT);
+  ethernet.setup(mac, ip, port);
+  pinMode(pir, INPUT);
+  pinMode(ledAlarme, OUTPUT);
+  pinMode(ledAtivo, OUTPUT);
+  pinMode(buzzer, OUTPUT);
 }
 
 void loop()
 {
-	Serial.begin(9600);
+ 
+  
+  Serial.begin(9600);
 
-	char* param;
+  char* param;
 
-	if (param = ethernet.serviceRequest())
-	{
-		if (strcmp(param, strlcat("desativar?token=", token)) == 0) {
-			desativar();
-			retornaStatus();
-		} else {
-			if (strcmp(param, strlcat("ativar?token=", token)) == 0) {
-				ativar();
-				retornaStatus();
-			}
-		}
-		return;
-	}
+  if (param = ethernet.serviceRequest())
+  {
+    if (strcmp(param, "desativar?token=o43DS89") == 0) {
+      desativar();
+      retornaStatus();
+    } else {
+      if (strcmp(param, "ativar?token=o43DS89") == 0) {
+        ativar();
+        retornaStatus();
+      } else if (strcmp(param, "status?token=o43DS89") == 0){
+        retornaStatus();
+      }
+    }
+    return;
+  }
 
-	if (alarmeAtivo && !intrusoDetectado) {
+  if (alarmeAtivo && !intrusoDetectado) {
 
-		movimento = digitalRead(pir);
+    movimento = digitalRead(pir);
 
-		if (movimento == 1) {
-			alertar();
-		}
+    if (movimento == 1) {
+      alertar();
+    }
 
-	}
+  }
 
-	delay(50);
+  delay(50);
 }
 
 void alertar() {
-	Serial.println("Alertado!");
-	intrusoDetectado = 1;
-	digitalWrite(led, HIGH);
+  Serial.println("Alertado!");
+  intrusoDetectado = 1;
+  digitalWrite(ledAlarme, HIGH);
+  tone(buzzer, 200);
 }
 
 void ativar() {
-	alarmeAtivo = 1;
-	intrusoDetectado = 0;
+  alarmeAtivo = 1;
+  intrusoDetectado = 0;
 //  Serial.println("Alarme ativado!");
+  digitalWrite(ledAtivo, HIGH);
 }
 
 void desativar() {
 //  Serial.println("Alarme desativado!");
-	digitalWrite(led, LOW);
-	intrusoDetectado = 0;
-	alarmeAtivo = 0;
+  digitalWrite(ledAlarme, LOW);
+  digitalWrite(ledAtivo, LOW);
+  intrusoDetectado = 0;
+  alarmeAtivo = 0;
+  noTone(buzzer);
 }
 
 void retornaStatus() {
@@ -88,11 +98,11 @@ void retornaStatus() {
   //  ethernet.print("Content-Type: application/json;charset=utf-8\r\n");
   //  ethernet.print("Server: Arduino\r\n");
   //  ethernet.print("Connection: close\r\n");
-	if (alarmeAtivo) {
-		ethernet.print("{\"ativo\":1}");
-	} else {
-		ethernet.print("{\"ativo\":0}\r\n");
-	}
+  if (alarmeAtivo) {
+    ethernet.print("{\"ativo\":1}");
+  } else {
+    ethernet.print("{\"ativo\":0}\r\n");
+  }
 
-	ethernet.respond();
+  ethernet.respond();
 }
